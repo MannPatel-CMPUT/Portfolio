@@ -41,7 +41,10 @@ export default function DriverReveal({
     >
       <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-papaya/10 to-transparent blur-3xl opacity-60" />
 
-      <div className="relative h-full w-full overflow-hidden rounded-2xl border border-white/10 bg-white">
+      <div className="relative h-full w-full overflow-hidden rounded-2xl border border-papaya/30 bg-f1-white">
+        {/* faint kerb at the bottom */}
+        <div className="absolute bottom-0 left-0 right-0 h-1 kerb-papaya opacity-80 z-10" />
+
         {/* Portrait revealed on hover */}
         <img
           src={portraitImage}

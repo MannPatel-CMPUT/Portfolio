@@ -1,0 +1,125 @@
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+
+const navItems = [
+  { label: 'Driver', id: 'about', no: '01' },
+  { label: 'Garage', id: 'projects', no: '02' },
+  { label: 'Telemetry', id: 'skills', no: '03' },
+  { label: 'Stints', id: 'timeline', no: '04' },
+  { label: 'Pit Radio', id: 'contact', no: '05' },
+]
+
+interface NavbarProps { onNavigate: (sectionId: string) => void }
+
+export default function Navbar({ onNavigate }: NavbarProps) {
+  const [scrolled, setScrolled] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [time, setTime] = useState('')
+
+  useEffect(() => {
+    const handle = () => setScrolled(window.scrollY > 40)
+    window.addEventListener('scroll', handle)
+    return () => window.removeEventListener('scroll', handle)
+  }, [])
+
+  useEffect(() => {
+    const tick = () => {
+      const d = new Date()
+      const mm = String(d.getMinutes()).padStart(2, '0')
+      const ss = String(d.getSeconds()).padStart(2, '0')
+      const ms = String(d.getMilliseconds()).padStart(3, '0').slice(0, 2)
+      setTime(`${String(d.getHours()).padStart(2, '0')}:${mm}:${ss}.${ms}`)
+    }
+    tick()
+    const id = setInterval(tick, 73)
+    return () => clearInterval(id)
+  }, [])
+
+  const handleNav = (id: string) => {
+    onNavigate(id)
+    setMobileOpen(false)
+  }
+
+  return (
+    <nav
+      data-testid="navbar"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled ? 'bg-background/85 backdrop-blur-lg border-b border-papaya/15' : 'bg-transparent'
+      }`}
+    >
+      <div className="mx-auto max-w-[1440px] px-6 flex items-center justify-between h-16">
+        <button
+          data-testid="nav-logo"
+          onClick={() => handleNav('hero')}
+          className="flex items-center gap-2 group"
+        >
+          <span className="relative inline-block w-7 h-7">
+            <span className="absolute inset-0 rounded-full bg-papaya group-hover:glow-papaya transition-shadow" />
+            <span className="absolute inset-[5px] rounded-full bg-background" />
+            <span className="absolute inset-[9px] rounded-full bg-papaya" />
+          </span>
+          <span className="font-display font-black text-lg tracking-wider text-f1-white group-hover:text-papaya transition-colors">
+            MP<span className="text-papaya">·</span>81
+          </span>
+        </button>
+
+        <div className="hidden md:flex items-center gap-1">
+          {navItems.map((item) => (
+            <button
+              key={item.id}
+              data-testid={`nav-${item.id}`}
+              onClick={() => handleNav(item.id)}
+              className="group relative px-3 py-2 font-mono text-[11px] tracking-[0.18em] text-grey hover:text-papaya transition-colors uppercase"
+            >
+              <span className="text-papaya/60 mr-1.5 text-[9px]">{item.no}</span>
+              {item.label}
+              <span className="absolute left-3 right-3 -bottom-0.5 h-px bg-papaya scale-x-0 group-hover:scale-x-100 origin-left transition-transform" />
+            </button>
+          ))}
+        </div>
+
+        <div className="hidden md:flex items-center gap-3">
+          <div className="font-mono text-[10px] tracking-wider text-grey">
+            <span className="text-papaya">●</span> LIVE · <span className="text-f1-white">{time}</span>
+          </div>
+        </div>
+
+        <button
+          data-testid="mobile-menu-toggle"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className="md:hidden flex flex-col gap-1.5 p-2"
+          aria-label="Toggle menu"
+        >
+          <span className={`block w-5 h-0.5 bg-f1-white transition-transform ${mobileOpen ? 'rotate-45 translate-y-2' : ''}`} />
+          <span className={`block w-5 h-0.5 bg-f1-white transition-opacity ${mobileOpen ? 'opacity-0' : ''}`} />
+          <span className={`block w-5 h-0.5 bg-f1-white transition-transform ${mobileOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+        </button>
+      </div>
+
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden bg-background/95 backdrop-blur-lg border-b border-papaya/20 overflow-hidden"
+          >
+            <div className="px-6 py-4 flex flex-col gap-1">
+              {navItems.map((item) => (
+                <button
+                  key={item.id}
+                  data-testid={`nav-mobile-${item.id}`}
+                  onClick={() => handleNav(item.id)}
+                  className="font-mono text-sm tracking-wider text-grey hover:text-papaya transition-colors uppercase text-left py-3 border-b border-white/5"
+                >
+                  <span className="text-papaya mr-2">{item.no}</span>
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </nav>
+  )
+}
