@@ -1,38 +1,67 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import DriverReveal from './DriverReveal'
 
 interface HeroProps {
   onViewProjects: () => void
   onDownloadResume: () => void
 }
 
+const TELEMETRY = [
+  { pos: 'top-left', label: 'TEAM', value: 'MCL · CS', sub: 'U of Alberta' },
+  { pos: 'top-right', label: 'SPEC', value: 'BACKEND', sub: 'AI / Systems' },
+  { pos: 'bot-left', label: 'FOCUS', value: 'I·R', sub: 'Info Retrieval' },
+  { pos: 'bot-right', label: 'STATUS', value: 'OPEN', sub: 'Intern 2026' },
+] as const
+
+const TICKER_ITEMS = [
+  'PYTHON · FASTAPI · MONGODB',
+  'AI / ML · INFORMATION RETRIEVAL',
+  'STATUS · OPEN TO INTERNSHIPS 2026',
+  'BASED · EDMONTON, AB',
+  'STACK · REACT · TS · NODE',
+  'CURRENTLY ENGINEERING · CAREER OS',
+  'SYSTEMS · APIS · DATABASES',
+]
+
+const cornerPos: Record<string, string> = {
+  'top-left': 'top-4 md:top-8 left-2 md:left-8 text-left items-start',
+  'top-right': 'top-4 md:top-8 right-2 md:right-8 text-right items-end',
+  'bot-left': 'bottom-28 md:bottom-32 left-2 md:left-8 text-left items-start',
+  'bot-right': 'bottom-28 md:bottom-32 right-2 md:right-8 text-right items-end',
+}
+
 /**
- * Hero = pit-lane / starting grid. Background uses asphalt + pit-lane stripes
- * + papaya speed-streaks + race-control ticker.
+ * Hero = centerpiece driver portrait.
+ * The racer (transparent PNG) sits dead-center against an asphalt + spotlight stage.
+ * On hover, the helmet cross-fades into the driver's portrait.
+ * MANN PATEL display type is layered behind the racer; telemetry chips sit in the corners.
  */
 export default function Hero({ onViewProjects, onDownloadResume }: HeroProps) {
+  const [hover, setHover] = useState(false)
+
   return (
     <section
       id="hero"
       className="relative min-h-screen flex items-center overflow-hidden asphalt-tex"
     >
       {/* pit-lane stripes baseline */}
-      <div className="absolute inset-x-0 bottom-0 h-40 pitlane-stripes opacity-70" />
-      {/* horizon glow */}
-      <div className="absolute -top-32 left-1/3 w-[60%] h-[60%] bg-papaya/15 blur-[140px] rounded-full" />
-      <div className="absolute -bottom-24 -left-24 w-[40%] h-[40%] bg-speed-blue/8 blur-[120px] rounded-full" />
+      <div className="absolute inset-x-0 bottom-0 h-44 pitlane-stripes opacity-60" />
+      {/* stage spotlight behind the racer */}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vmin] h-[90vmin] bg-papaya/20 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vmin] h-[60vmin] bg-soft-orange/15 blur-[80px] rounded-full pointer-events-none" />
+      <div className="absolute -bottom-32 left-1/2 -translate-x-1/2 w-[80vw] h-[40vh] bg-speed-blue/5 blur-[140px] rounded-full pointer-events-none" />
 
       {/* speed streaks */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {[15, 32, 48, 64, 78].map((top, i) => (
+        {[14, 28, 46, 62, 78].map((top, i) => (
           <span
-            key={i}
-            className="absolute h-px bg-gradient-to-r from-transparent via-papaya/60 to-transparent speedline"
+            key={top}
+            className="absolute h-px bg-gradient-to-r from-transparent via-papaya/55 to-transparent speedline"
             style={{
               top: `${top}%`,
               left: 0,
               right: 0,
-              width: '40%',
+              width: '45%',
               animationDelay: `${i * 0.35}s`,
               animationDuration: `${1.4 + (i % 2) * 0.4}s`,
             }}
@@ -40,140 +69,195 @@ export default function Hero({ onViewProjects, onDownloadResume }: HeroProps) {
         ))}
       </div>
 
-      {/* corner kerb accent */}
-      <div className="absolute top-20 left-0 h-2 w-40 kerb-papaya" />
-      <div className="absolute bottom-44 right-0 h-2 w-56 kerb-papaya" />
+      {/* corner kerb */}
+      <div className="absolute top-20 left-0 h-1.5 w-32 kerb-papaya" />
+      <div className="absolute bottom-44 right-0 h-1.5 w-32 kerb-papaya" />
 
-      <div className="relative z-10 mx-auto w-full max-w-[1440px] px-6 py-28 lg:py-32">
-        <div className="grid lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-16 items-center">
-          {/* Left – the driver intro */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, delay: 0.1 }}
+      {/* corner telemetry chips */}
+      {TELEMETRY.map((t, i) => (
+        <motion.div
+          key={t.label}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 + i * 0.08, duration: 0.5 }}
+          className={`hidden md:flex absolute flex-col z-30 ${cornerPos[t.pos]} pointer-events-none`}
+        >
+          <div className="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.25em] text-papaya">
+            <span className="w-1.5 h-1.5 rounded-full bg-papaya animate-pulse" />
+            {t.label}
+          </div>
+          <div className="font-display font-black text-xl text-f1-white leading-none mt-1">
+            {t.value}
+          </div>
+          <div className="font-mono text-[10px] text-grey mt-1 tracking-wider">{t.sub}</div>
+        </motion.div>
+      ))}
+
+      {/* CENTER STAGE */}
+      <div className="relative z-10 w-full max-w-[1600px] mx-auto px-6 py-24 lg:py-28 flex flex-col items-center">
+        {/* race number chip + driver tag */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="flex items-center gap-3 mb-4 z-30"
+        >
+          <span className="font-mono text-[10px] tracking-[0.3em] text-papaya">
+            ◉ DRIVER · CARD 81
+          </span>
+          <span className="h-px w-12 bg-papaya/50" />
+          <span className="font-mono text-[10px] tracking-[0.3em] text-grey">
+            MCL · MP-26 · UALBERTA
+          </span>
+        </motion.div>
+
+        {/* The driver stage */}
+        <div className="relative flex items-center justify-center w-full">
+          {/* Big race number 81 ghosted behind */}
+          <div
+            className="absolute font-display font-black text-[36vw] md:text-[28vw] lg:text-[22vw] leading-none text-papaya/[0.06] select-none pointer-events-none -z-0 top-1/2 -translate-y-1/2"
+            aria-hidden
           >
-            {/* race number plate */}
-            <div className="flex items-center gap-4 mb-7">
-              <div className="relative">
-                <div className="font-display font-black text-7xl md:text-8xl leading-none text-papaya text-glow">
-                  81
-                </div>
-                <div className="absolute -bottom-1 left-0 right-0 h-1 bg-papaya/60" />
-              </div>
-              <div>
-                <div className="font-mono text-[10px] tracking-[0.3em] text-grey uppercase">
-                  Car #81 · Driver Card
-                </div>
-                <div className="font-display font-bold text-xl text-f1-white mt-1 tracking-wide">
-                  MCL · MP-26
-                </div>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-papaya animate-pulse" />
-                  <span className="font-mono text-[10px] tracking-wider text-papaya">
-                    SYSTEMS · ARMED
-                  </span>
-                </div>
-              </div>
-            </div>
+            81
+          </div>
 
-            <h1 className="font-display font-black text-6xl sm:text-7xl lg:text-[9rem] text-f1-white leading-[0.85] uppercase tracking-tight">
-              MANN
-              <br />
-              <span className="relative inline-block">
-                <span className="text-transparent bg-clip-text bg-gradient-to-br from-papaya via-soft-orange to-papaya">
-                  PATEL
-                </span>
-                <span className="absolute -right-4 top-2 font-mono text-xs text-papaya/60 tracking-wider rotate-90 origin-left">
-                  ROOKIE · CS · UALBERTA
-                </span>
-              </span>
-            </h1>
-
-            <p className="mt-7 text-base md:text-lg text-grey max-w-lg leading-relaxed">
-              Software engineer who builds systems the way a race team builds cars —
-              every component tuned, every metric measured, every detail intentional.
-            </p>
-
-            <div className="mt-8 flex flex-wrap gap-3">
-              <button
-                data-testid="hero-projects-btn"
-                onClick={onViewProjects}
-                className="group relative px-7 py-3 bg-papaya text-background font-display font-bold text-sm tracking-[0.15em] uppercase diagonal-cut hover:bg-soft-orange transition-colors duration-200 glow-papaya"
-              >
-                <span className="relative z-10">View Garage →</span>
-              </button>
-              <button
-                data-testid="hero-resume-btn"
-                onClick={onDownloadResume}
-                className="group px-7 py-3 border border-white/20 text-f1-white font-display font-bold text-sm tracking-[0.15em] uppercase hover:border-papaya hover:text-papaya transition-colors duration-200"
-              >
-                <span className="text-papaya/70 group-hover:text-papaya mr-2">↓</span>
-                Race Card / CV
-              </button>
-            </div>
-
-            {/* telemetry strip */}
-            <div className="mt-10 grid grid-cols-3 gap-4 max-w-md">
-              {[
-                { label: 'TEAM', value: 'MCL · CS', sub: 'University of Alberta' },
-                { label: 'SPEC', value: 'BACKEND', sub: 'AI / Systems' },
-                { label: 'FOCUS', value: 'I·R', sub: 'Information Retrieval' },
-              ].map((s) => (
-                <div key={s.label} className="border-l border-papaya/40 pl-3">
-                  <div className="font-mono text-[9px] tracking-[0.25em] text-grey uppercase">
-                    {s.label}
-                  </div>
-                  <div className="font-display font-black text-xl text-f1-white mt-0.5">
-                    {s.value}
-                  </div>
-                  <div className="font-mono text-[10px] text-grey/80 mt-0.5">{s.sub}</div>
-                </div>
-              ))}
-            </div>
+          {/* MANN on left */}
+          <motion.div
+            initial={{ opacity: 0, x: -40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, delay: 0.15 }}
+            className="font-display font-black text-5xl sm:text-6xl md:text-7xl lg:text-[10rem] text-f1-white uppercase leading-[0.85] tracking-tight z-20 hidden md:block"
+            style={{ marginRight: '-3vw' }}
+          >
+            MANN
           </motion.div>
 
-          {/* Right – driver reveal card */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, delay: 0.25 }}
-            className="relative"
+          {/* The racer image — centerpiece */}
+          <button
+            type="button"
+            data-testid="hero-driver"
+            aria-label="Hover to reveal the driver's face"
+            onMouseEnter={() => setHover(true)}
+            onMouseLeave={() => setHover(false)}
+            onFocus={() => setHover(true)}
+            onBlur={() => setHover(false)}
+            className="relative z-20 group focus:outline-none"
           >
-            {/* HUD corners */}
-            <div className="absolute -top-3 -left-3 w-12 h-12 border-t-2 border-l-2 border-papaya" />
-            <div className="absolute -top-3 -right-3 w-12 h-12 border-t-2 border-r-2 border-papaya" />
-            <div className="absolute -bottom-3 -left-3 w-12 h-12 border-b-2 border-l-2 border-papaya" />
-            <div className="absolute -bottom-3 -right-3 w-12 h-12 border-b-2 border-r-2 border-papaya" />
-
-            <div className="absolute -top-8 left-0 font-mono text-[10px] tracking-[0.25em] text-papaya">
-              ◉ REC · DRIVER CAM
-            </div>
-            <div className="absolute -top-8 right-0 font-mono text-[10px] tracking-[0.25em] text-grey">
-              FOV · 16:9
-            </div>
-
-            <DriverReveal
-              portraitImage="/images/driver-face-reveal.png"
-              suitedImage="/images/driver-suited.png"
-              helmetImage="/images/driver-helmet.png"
-              helmetTop="3%"
-              helmetWidth="68%"
-              alt="Mann Patel driver reveal"
+            {/* halo */}
+            <div
+              className="absolute inset-0 -m-12 rounded-full pointer-events-none transition-all duration-500"
+              style={{
+                background:
+                  'radial-gradient(circle, rgba(255,128,0,0.32) 0%, rgba(255,128,0,0.10) 35%, transparent 70%)',
+                filter: hover ? 'blur(40px)' : 'blur(30px)',
+                opacity: hover ? 1 : 0.7,
+              }}
             />
+            {/* HUD corner brackets */}
+            <span className="absolute -top-3 -left-3 w-10 h-10 border-t-2 border-l-2 border-papaya/60 group-hover:border-papaya transition-colors" />
+            <span className="absolute -top-3 -right-3 w-10 h-10 border-t-2 border-r-2 border-papaya/60 group-hover:border-papaya transition-colors" />
+            <span className="absolute -bottom-3 -left-3 w-10 h-10 border-b-2 border-l-2 border-papaya/60 group-hover:border-papaya transition-colors" />
+            <span className="absolute -bottom-3 -right-3 w-10 h-10 border-b-2 border-r-2 border-papaya/60 group-hover:border-papaya transition-colors" />
 
-            <div className="mt-3 grid grid-cols-3 gap-2 font-mono text-[9px] tracking-wider text-grey">
-              <div className="border border-white/10 px-2 py-1.5">
-                <span className="text-papaya">●</span> HEART · 72 BPM
-              </div>
-              <div className="border border-white/10 px-2 py-1.5">
-                <span className="text-papaya">●</span> G · 0.0
-              </div>
-              <div className="border border-white/10 px-2 py-1.5">
-                <span className="text-papaya">●</span> COMM · OPEN
-              </div>
+            <div className="relative w-[58vw] sm:w-[42vw] md:w-[32vw] lg:w-[26vw] max-w-[420px] min-w-[240px] aspect-[634/663]">
+              {/* helmeted version */}
+              <motion.img
+                src="/images/racer-suited-transparent.png"
+                alt="Mann Patel · helmet on"
+                draggable={false}
+                animate={{ opacity: hover ? 0 : 1, scale: hover ? 1.02 : 1 }}
+                transition={{ duration: 0.35, ease: 'easeOut' }}
+                className="absolute inset-0 w-full h-full object-contain select-none"
+                style={{ filter: 'drop-shadow(0 14px 30px rgba(0,0,0,0.6))' }}
+              />
+              {/* face-reveal version on hover */}
+              <motion.img
+                src={`/images/driver-face-transparent.png?v=2`}
+                alt="Mann Patel"
+                draggable={false}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: hover ? 1 : 0, scale: hover ? 1 : 0.98 }}
+                transition={{ duration: 0.35, ease: 'easeOut' }}
+                className="absolute inset-0 w-full h-full object-contain object-[center_top] select-none"
+                style={{
+                  filter: 'drop-shadow(0 14px 30px rgba(0,0,0,0.6))',
+                  WebkitMaskImage:
+                    'radial-gradient(ellipse 90% 100% at 50% 45%, #000 78%, transparent 100%)',
+                  maskImage:
+                    'radial-gradient(ellipse 90% 100% at 50% 45%, #000 78%, transparent 100%)',
+                }}
+              />
+
+              {/* hover hint */}
+              <motion.div
+                animate={{ opacity: hover ? 0 : 1 }}
+                className="absolute -bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap font-mono text-[10px] tracking-[0.3em] text-papaya"
+              >
+                ◉ HOVER · VISOR UP
+              </motion.div>
             </div>
+          </button>
+
+          {/* PATEL on right */}
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, delay: 0.15 }}
+            className="font-display font-black text-5xl sm:text-6xl md:text-7xl lg:text-[10rem] uppercase leading-[0.85] tracking-tight z-20 hidden md:block"
+            style={{ marginLeft: '-3vw' }}
+          >
+            <span className="text-transparent bg-clip-text bg-gradient-to-br from-papaya via-soft-orange to-papaya">
+              PATEL
+            </span>
           </motion.div>
         </div>
+
+        {/* Mobile-only MANN PATEL above CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="md:hidden mt-6 text-center"
+        >
+          <h1 className="font-display font-black text-5xl uppercase leading-[0.85] tracking-tight text-f1-white">
+            MANN{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-br from-papaya via-soft-orange to-papaya">
+              PATEL
+            </span>
+          </h1>
+        </motion.div>
+
+        {/* tagline + CTAs */}
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mt-10 md:mt-12 text-center max-w-2xl"
+        >
+          <p className="text-base md:text-lg text-grey leading-relaxed">
+            Software engineer who builds systems the way a race team builds cars —
+            every component tuned, every metric measured,{' '}
+            <span className="text-f1-white">every detail intentional.</span>
+          </p>
+
+          <div className="mt-7 flex flex-wrap justify-center gap-3">
+            <button
+              data-testid="hero-projects-btn"
+              onClick={onViewProjects}
+              className="px-7 py-3 bg-papaya text-background font-display font-bold text-sm tracking-[0.15em] uppercase diagonal-cut hover:bg-soft-orange transition-colors duration-200 glow-papaya"
+            >
+              View Garage →
+            </button>
+            <button
+              data-testid="hero-resume-btn"
+              onClick={onDownloadResume}
+              className="px-7 py-3 border border-white/20 text-f1-white font-display font-bold text-sm tracking-[0.15em] uppercase hover:border-papaya hover:text-papaya transition-colors duration-200"
+            >
+              <span className="text-papaya/70 mr-2">↓</span>
+              Race Card / CV
+            </button>
+          </div>
+        </motion.div>
       </div>
 
       {/* race-control ticker */}
@@ -184,18 +268,10 @@ export default function Hero({ onViewProjects, onDownloadResume }: HeroProps) {
           </span>
           <div className="flex-1 overflow-hidden">
             <div className="ticker-track flex whitespace-nowrap font-mono text-[11px] tracking-wider text-grey">
-              {Array.from({ length: 2 }).map((_, k) => (
-                <span key={k} className="flex items-center">
-                  {[
-                    'PYTHON · FASTAPI · MONGODB',
-                    'AI / ML · INFORMATION RETRIEVAL',
-                    'STATUS · OPEN TO INTERNSHIPS 2026',
-                    'BASED · EDMONTON, AB',
-                    'STACK · REACT · TS · NODE',
-                    'CURRENTLY ENGINEERING · CAREER OS',
-                    'SYSTEMS · APIS · DATABASES',
-                  ].map((t, i) => (
-                    <span key={i} className="px-6 flex items-center gap-3">
+              {[0, 1].map((dup) => (
+                <span key={dup} className="flex items-center">
+                  {TICKER_ITEMS.map((t) => (
+                    <span key={t} className="px-6 flex items-center gap-3">
                       <span className="text-papaya">▣</span>
                       <span>{t}</span>
                     </span>
@@ -212,7 +288,7 @@ export default function Hero({ onViewProjects, onDownloadResume }: HeroProps) {
         <span className="font-mono text-[10px] tracking-[0.3em] text-grey uppercase">
           Roll out
         </span>
-        <span className="w-px h-10 bg-gradient-to-b from-papaya to-transparent" />
+        <span className="w-px h-8 bg-gradient-to-b from-papaya to-transparent" />
       </div>
     </section>
   )
