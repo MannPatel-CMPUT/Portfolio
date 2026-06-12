@@ -11,6 +11,25 @@ import { useEffect, useRef, useState } from 'react'
  */
 const SECTIONS = ['hero', 'about', 'projects', 'skills', 'timeline', 'contact'] as const
 
+/** Colour for the i-th RPM LED segment out of 18 (papaya → soft-orange → speed-blue shift light). */
+function rpmSegmentColor(i: number): string {
+  if (i < 11) return 'bg-papaya'
+  if (i < 15) return 'bg-soft-orange'
+  return 'bg-speed-blue'
+}
+
+/** Compute the active section index based on which section sits closest to the top. */
+function detectActiveSection(): number {
+  let active = 0
+  SECTIONS.forEach((id, i) => {
+    const el = document.getElementById(id)
+    if (!el) return
+    const r = el.getBoundingClientRect()
+    if (r.top < window.innerHeight * 0.35) active = i
+  })
+  return active
+}
+
 export default function RaceHUD() {
   const [progress, setProgress] = useState(0)
   const [section, setSection] = useState(0)
@@ -26,15 +45,8 @@ export default function RaceHUD() {
       const p = max > 0 ? Math.min(1, y / max) : 0
       setProgress(p)
 
-      // section detection: which section is closest to top of viewport
-      let active = 0
-      SECTIONS.forEach((id, i) => {
-        const el = document.getElementById(id)
-        if (!el) return
-        const r = el.getBoundingClientRect()
-        if (r.top < window.innerHeight * 0.35) active = i
-      })
-      setSection(active)
+      // section detection
+      setSection(detectActiveSection())
 
       // RPM from instantaneous scroll velocity
       const now = performance.now()
@@ -72,8 +84,7 @@ export default function RaceHUD() {
           <div className="flex items-end gap-[3px] h-7">
             {Array.from({ length: 18 }).map((_, i) => {
               const active = rpm * 18 > i
-              const color =
-                i < 11 ? 'bg-papaya' : i < 15 ? 'bg-soft-orange' : 'bg-speed-blue'
+              const color = rpmSegmentColor(i)
               return (
                 <span
                   key={i}

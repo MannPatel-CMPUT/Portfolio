@@ -6,6 +6,17 @@ interface ProjectCardProps {
   index: number
 }
 
+/** Cycle through papaya/blue/white/soft-orange compounds for tyre-style tech chips. */
+function chipColor(i: number): string {
+  const palette = [
+    'border-papaya/60 text-papaya',
+    'border-speed-blue/60 text-speed-blue',
+    'border-f1-white/30 text-f1-white',
+    'border-soft-orange/60 text-soft-orange',
+  ] as const
+  return palette[i % palette.length]
+}
+
 /**
  * A garage bay panel housing each project car.
  * Layout: top sign (BAY 0X), big project title, telemetry stats, tyre-style tech tags,
@@ -87,14 +98,7 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
               Stack
             </span>
             {project.techStack.map((t, i) => {
-              const color =
-                i % 4 === 0
-                  ? 'border-papaya/60 text-papaya'
-                  : i % 4 === 1
-                    ? 'border-speed-blue/60 text-speed-blue'
-                    : i % 4 === 2
-                      ? 'border-f1-white/30 text-f1-white'
-                      : 'border-soft-orange/60 text-soft-orange'
+              const color = chipColor(i)
               return (
                 <span
                   key={t}

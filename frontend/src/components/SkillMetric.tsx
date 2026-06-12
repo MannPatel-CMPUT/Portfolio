@@ -6,6 +6,13 @@ interface SkillMetricProps {
   index: number
 }
 
+/** Telemetry-bar segment colour: papaya body → soft-orange near redline → speed-blue shift light. */
+function segmentColor(i: number): string {
+  if (i < 7) return 'bg-papaya'
+  if (i < 11) return 'bg-soft-orange'
+  return 'bg-speed-blue'
+}
+
 /**
  * A single telemetry readout. Uses a 14-LED RPM bar where the level fills
  * across green → papaya → soft-orange → speed-blue (shift light).
@@ -34,8 +41,7 @@ export default function SkillMetric({ skill, index }: SkillMetricProps) {
       <div className="flex items-end gap-[2px] h-4">
         {Array.from({ length: segments }).map((_, i) => {
           const on = i < filled
-          const color =
-            i < 7 ? 'bg-papaya' : i < 11 ? 'bg-soft-orange' : 'bg-speed-blue'
+          const color = segmentColor(i)
           return (
             <motion.span
               key={i}

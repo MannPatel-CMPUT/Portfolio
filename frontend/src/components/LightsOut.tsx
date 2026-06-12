@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 
+/** Tachometer LED colour at index i (0..13). */
+function tachColor(i: number): string {
+  if (i < 9) return 'bg-papaya'
+  if (i < 12) return 'bg-soft-orange'
+  return 'bg-speed-blue'
+}
+
 /**
  * Formula 1 race-start lights sequence used as a page-load intro overlay.
  * Five red light pairs illuminate one-by-one, hold, then all extinguish ("LIGHTS OUT")
@@ -113,7 +120,7 @@ export default function LightsOut({ onDone }: { onDone: () => void }) {
             <span>RPM</span>
             {Array.from({ length: 14 }).map((_, i) => {
               const active = (lit / 5) * 14 > i || phase === 'go'
-              const color = i < 9 ? 'bg-papaya' : i < 12 ? 'bg-soft-orange' : 'bg-speed-blue'
+              const color = tachColor(i)
               return (
                 <span
                   key={i}

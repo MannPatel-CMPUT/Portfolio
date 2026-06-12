@@ -16,6 +16,13 @@ const CATEGORY_ORDER = [
   'Concepts',
 ]
 
+/** Wheel-LED colour for the 11-segment shift bar. */
+function wheelLedColor(i: number): string {
+  if (i < 4) return 'bg-emerald-400'
+  if (i < 8) return 'bg-papaya'
+  return 'bg-speed-blue'
+}
+
 /**
  * Skills = the steering wheel digital dashboard.
  * Background: dark circuit board grid + tech-grid. Category selector mimics
@@ -63,8 +70,7 @@ export default function Skills() {
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-1.5">
               {Array.from({ length: 11 }).map((_, i) => {
-                const c =
-                  i < 4 ? 'bg-emerald-400' : i < 8 ? 'bg-papaya' : 'bg-speed-blue'
+                const c = wheelLedColor(i)
                 return (
                   <span
                     key={i}
