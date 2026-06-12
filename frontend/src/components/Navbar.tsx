@@ -36,8 +36,9 @@ export default function Navbar({ onNavigate }: NavbarProps) {
   }, [])
 
   const handleNav = (id: string) => {
-    onNavigate(id)
     setMobileOpen(false)
+    // wait for the mobile menu collapse animation to settle so the smooth scroll isn't cancelled
+    setTimeout(() => onNavigate(id), 60)
   }
 
   return (
@@ -79,7 +80,7 @@ export default function Navbar({ onNavigate }: NavbarProps) {
         </div>
 
         <div className="hidden md:flex items-center gap-3">
-          <div className="font-mono text-[10px] tracking-wider text-grey">
+          <div data-testid="nav-clock" className="font-mono text-[10px] tracking-wider text-grey">
             <span className="text-papaya">●</span> LIVE · <span className="text-f1-white">{time}</span>
           </div>
         </div>
