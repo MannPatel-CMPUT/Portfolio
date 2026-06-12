@@ -48,39 +48,47 @@ export default function Navbar({ onNavigate }: NavbarProps) {
         scrolled ? 'bg-background/85 backdrop-blur-lg border-b border-papaya/15' : 'bg-transparent'
       }`}
     >
-      <div className="mx-auto max-w-[1440px] px-6 flex items-center justify-between h-16">
+      <div className="mx-auto max-w-[1600px] px-6 lg:px-10 flex items-center justify-between h-16 lg:h-20">
         <button
           data-testid="nav-logo"
           onClick={() => handleNav('hero')}
-          className="flex items-center gap-2 group"
+          className="flex items-center gap-3 group"
         >
-          <span className="relative inline-block w-7 h-7">
+          <span className="relative inline-block w-8 h-8 lg:w-10 lg:h-10">
             <span className="absolute inset-0 rounded-full bg-papaya group-hover:glow-papaya transition-shadow" />
-            <span className="absolute inset-[5px] rounded-full bg-background" />
-            <span className="absolute inset-[9px] rounded-full bg-papaya" />
+            <span className="absolute inset-[6px] rounded-full bg-background" />
+            <span className="absolute inset-[11px] rounded-full bg-papaya" />
           </span>
-          <span className="font-display font-black text-lg tracking-wider text-f1-white group-hover:text-papaya transition-colors">
+          <span
+            className="font-display font-black text-xl lg:text-3xl tracking-wider text-f1-white group-hover:text-papaya transition-colors leading-none"
+            style={{
+              textShadow:
+                '1px 1px 0 #ff8000, 2px 2px 0 rgba(255,128,0,0.75), 3px 3px 0 rgba(255,128,0,0.5), 4px 4px 0 rgba(255,128,0,0.3), 6px 6px 14px rgba(255,128,0,0.35)',
+            }}
+          >
             MP<span className="text-papaya">·</span>81
           </span>
         </button>
 
-        <div className="hidden md:flex items-center gap-1">
+        <div className="hidden md:flex items-center gap-1 lg:gap-3">
           {navItems.map((item) => (
             <button
               key={item.id}
               data-testid={`nav-${item.id}`}
               onClick={() => handleNav(item.id)}
-              className="group relative px-3 py-2 font-mono text-[11px] tracking-[0.18em] text-grey hover:text-papaya transition-colors uppercase"
+              className="group relative px-3 lg:px-4 py-2 font-display font-bold text-[13px] lg:text-base tracking-[0.2em] text-grey hover:text-papaya transition-colors uppercase"
             >
-              <span className="text-papaya/60 mr-1.5 text-[9px]">{item.no}</span>
+              <span className="text-papaya/60 mr-1.5 lg:mr-2 font-mono text-[10px] lg:text-xs">
+                {item.no}
+              </span>
               {item.label}
-              <span className="absolute left-3 right-3 -bottom-0.5 h-px bg-papaya scale-x-0 group-hover:scale-x-100 origin-left transition-transform" />
+              <span className="absolute left-3 right-3 lg:left-4 lg:right-4 -bottom-0.5 h-[2px] bg-papaya scale-x-0 group-hover:scale-x-100 origin-left transition-transform" />
             </button>
           ))}
         </div>
 
         <div className="hidden md:flex items-center gap-3">
-          <div data-testid="nav-clock" className="font-mono text-[10px] tracking-wider text-grey">
+          <div data-testid="nav-clock" className="font-mono text-[10px] lg:text-xs tracking-wider text-grey">
             <span className="text-papaya">●</span> LIVE · <span className="text-f1-white">{time}</span>
           </div>
         </div>

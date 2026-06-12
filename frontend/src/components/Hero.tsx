@@ -24,8 +24,8 @@ const TICKER_ITEMS = [
 ]
 
 const cornerPos: Record<string, string> = {
-  'top-left': 'top-4 md:top-8 left-2 md:left-8 text-left items-start',
-  'top-right': 'top-4 md:top-8 right-2 md:right-8 text-right items-end',
+  'top-left': 'top-20 lg:top-24 left-2 md:left-8 text-left items-start',
+  'top-right': 'top-20 lg:top-24 right-2 md:right-8 text-right items-end',
   'bot-left': 'bottom-28 md:bottom-32 left-2 md:left-8 text-left items-start',
   'bot-right': 'bottom-28 md:bottom-32 right-2 md:right-8 text-right items-end',
 }
