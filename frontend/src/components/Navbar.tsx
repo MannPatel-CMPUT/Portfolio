@@ -61,10 +61,6 @@ export default function Navbar({ onNavigate }: NavbarProps) {
           </span>
           <span
             className="font-display font-black text-xl lg:text-3xl tracking-wider text-f1-white group-hover:text-papaya transition-colors leading-none"
-            style={{
-              textShadow:
-                '1px 1px 0 #ff8000, 2px 2px 0 rgba(255,128,0,0.75), 3px 3px 0 rgba(255,128,0,0.5), 4px 4px 0 rgba(255,128,0,0.3), 6px 6px 14px rgba(255,128,0,0.35)',
-            }}
           >
             MP<span className="text-papaya">·</span>81
           </span>
